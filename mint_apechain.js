@@ -138,10 +138,13 @@ async function checkMintStatus() {
 
         // Prompt user to mint
         console.log(`\n🎱 You can mint up to ${remaining} ball(s) today.`);
-        const answer = await askQuestion('Would you like to mint 500 balls? (yes/no): ');
+        
+        // Calculate how many to mint (500 or remaining, whichever is less)
+        const mintAmount = remaining > 500n ? 500n : remaining;
+        const answer = await askQuestion(`Would you like to mint ${mintAmount} balls? (yes/no): `);
 
         if (answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y') {
-            await mintBalls(contract, wallet, 500);
+            await mintBalls(contract, wallet, Number(mintAmount), Number(remaining));
         } else {
             console.log('Mint cancelled. Have a great day!');
         }
@@ -159,21 +162,32 @@ async function checkMintStatus() {
     }
 }
 
-async function mintBalls(contract, wallet, count) {
+async function mintBalls(contract, wallet, count, dailyRemaining) {
     console.log(`\n🚀 Starting batch mint of ${count} balls...`);
+    console.log(`📊 Daily limit remaining: ${dailyRemaining} balls`);
     console.log('━'.repeat(60));
     
     let successful = 0;
     let failed = 0;
     const startTime = Date.now();
     
-    for (let i = 0; i < count; i++) {
+    // Ensure we don't try to mint more than the daily limit allows
+    const actualMintCount = Math.min(count, dailyRemaining);
+    
+    for (let i = 0; i < actualMintCount; i++) {
         try {
+            // Check if we're about to exceed daily limit
+            if (successful >= dailyRemaining) {
+                console.log(`\n\n⚠️ Stopping: Reached daily limit (${dailyRemaining} balls)`);
+                break;
+            }
+            
             // Show progress every 10 mints
             if (i > 0 && i % 10 === 0) {
                 const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
                 const rate = (successful / elapsed).toFixed(1);
-                console.log(`\n📊 Progress: ${i}/${count} (${successful} successful, ${failed} failed) - ${rate} balls/sec`);
+                console.log(`\n📊 Progress: ${i}/${actualMintCount} (${successful} successful, ${failed} failed) - ${rate} balls/sec`);
+                console.log(`   Remaining today: ${dailyRemaining - successful} balls`);
             }
             
             // Call mint without gas estimation
