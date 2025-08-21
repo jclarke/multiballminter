@@ -1,0 +1,13 @@
+{
+  "name": "apechain-minter",
+  "version": "1.0.0",
+  "description": "Script to mint NFTs on ApeChain",
+  "main": "mint_apechain.js",
+  "scripts": {
+    "mint": "node mint_apechain.js"
+  },
+  "dependencies": {
+    "ethers": "^6.11.0",
+    "dotenv": "^16.4.0"
+  }
+}
