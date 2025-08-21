@@ -83,6 +83,8 @@ sudo apt-get install -y nodejs
    ```bash
    npm run mint
    ```
+
+   
    This will execute the ApeChain minting script (`mint_apechain.js`)
 
 ## Environment Variables
