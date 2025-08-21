@@ -79,14 +79,11 @@ sudo apt-get install -y nodejs
 ## Usage
 
 1. Ensure your `.env` file contains your private key
-2. Run the application:
+2. Run the minting application:
    ```bash
-   npm run start
+   npm run mint
    ```
-   or if using Node directly:
-   ```bash
-   node index.js
-   ```
+   This will execute the ApeChain minting script (`mint_apechain.js`)
 
 ## Environment Variables
 
